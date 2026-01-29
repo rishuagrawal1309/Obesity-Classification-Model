@@ -2,28 +2,25 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Clone Repository') {
+        stage('Setup venv') {
             steps {
-                git 'https://github.com/rishuagrawal1309/Obesity-Classification-Model.git'
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                if [ -f requirements.txt ]; then
+                    pip install -r requirements.txt
+                fi
+                '''
             }
         }
 
-        stage('Build') {
+        stage('Run main.py') {
             steps {
-                echo 'Building the project...'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
+                sh '''
+                . venv/bin/activate
+                python main.py
+                '''
             }
         }
     }
